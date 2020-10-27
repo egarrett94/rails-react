@@ -12,6 +12,32 @@ const Recipe = (props) => {
   
     const url = `/api/v1/show/${id}`;
 
+    const handleDelete = () => {
+        const {
+            match: {
+              params: { id }
+            }
+        } = props;
+        const url = `/api/v1/destroy/${id}`;
+        const token = document.querySelector('meta[name="csrf-token"]').content;
+      
+        fetch(url, {
+            method: "DELETE",
+            headers: {
+                "X-CSRF-Token": token,
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Network response was not ok.");
+            })
+            .then(() => window.location.href = '/recipes')
+            .catch(error => console.log(error.message));
+    }
+
     useEffect(() => {
         fetch(url)
             .then(response => {
@@ -65,7 +91,7 @@ const Recipe = (props) => {
                     </div>
                 </div>
                 <div className="col-sm-12 col-lg-2">
-                    <button type="button" className="btn btn-danger">
+                    <button type="button" className="btn btn-danger" onClick={handleDelete}>
                     Delete Recipe
                     </button>
                 </div>
